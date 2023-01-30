@@ -67,13 +67,83 @@ SELECT DISTINCT(LOWER(CONCAT(
 
 -- Bonus: How many duplicate usernames are there from your previous query? 13251
 
-SELECT DISTINCT(LOWER(CONCAT(
+SELECT CONCAT(
 		SUBSTR(first_name, 1, 1), 
         SUBSTR(last_name, 1, 4), 
 		'_', 
         SUBSTR(birth_date, 6, 2), 
-        SUBSTR(birth_date, 3, 2)))) AS Username, COUNT(*) as total FROM employees
-        GROUP BY Username HAVING total >= 2 ORDER BY total;
+        SUBSTR(birth_date, 3, 2)) AS Username, 
+        COUNT(*) as Total 
+        FROM employees
+        GROUP BY Username 
+        HAVING total >= 2 
+        ORDER BY total;
+
+
+-- cannot add the aggregate function to distinct but you can with group by
+
+-- BONUS: Determine the historic average salary for each employee. 
+-- When you hear, read, or think "for each" with regard to SQL, you'll probably be grouping by that exact column.
+
+select emp_no, salary from salaries;
+
+SELECT emp_no, avg(salary) as ave_pay
+FROM salaries GROUP BY emp_no;
+
+-- Using the dept_emp table, count how many current employees work in each department. 
+-- Count how many current employees work in each department. 
+-- The query result should show 9 rows, one for each department and the employee count
+
+SELECT * FROM dept_emp;
+
+SELECT dept_no as Department, COUNT(emp_no) as Employees
+FROM dept_emp
+GROUP BY dept_no;
+
+-- Determine how many different salaries each employee has had. This includes both historic and current.
+
+SELECT * FROM salaries;
+
+select emp_no as Employee, COUNT(salary) as Num_Sal
+from salaries
+group by emp_no;
+
+-- Find the maximum salary for each employee.
+
+select emp_no as Employee, max(salary) as Max
+from salaries
+group by emp_no;
+
+-- Find the minimum salary for each employee.
+
+select emp_no as Employee, min(salary) as Min
+from salaries
+group by emp_no;
+
+select emp_no as Employee, min(salary) as Min, max(salary) as Max
+from salaries
+group by emp_no;
+
+-- Find the standard deviation of salaries for each employee.
+
+select emp_no as Employee, stddev(salary) as Salary_Dev
+from salaries
+group by emp_no;
+
+-- Now find the max salary for each employee where that max salary is greater than $150,000
+
+select emp_no as Employee, max(salary) as Max
+from salaries 
+group by emp_no
+having Max >= 150000;
+
+-- Find the average salary for each employee where that average salary is between $80k and $90k.
+
+select emp_no as Employee, avg(salary) as Ave_Income
+from salaries
+group by emp_no
+having Ave_Income between 80000 and 90000;
+
 
 
 
