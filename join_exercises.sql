@@ -116,7 +116,37 @@ GROUP BY departments.dept_name;
 
 -- Who is the highest paid employee in the Marketing Department?
 
+SELECT CONCAT(employees.first_name, ' ', employees.last_name) as 'Highest Paid Employee', departments.dept_name as 'Department'
+FROM salaries
+	JOIN dept_emp ON salaries.emp_no = dept_emp.emp_no
+	JOIN departments on dept_emp.dept_no = departments.dept_no
+	JOIN employees on salaries.emp_no = employees.emp_no
+WHERE dept_emp.to_date LIKE '9999%'
+	AND salaries.to_date LIKE '9999%'
+	AND departments.dept_name = 'Marketing'
+ORDER  BY salaries.salary DESC
+LIMIT 1;
 
+-- Which current department manager has the highest salary?
 
+SELECT CONCAT(employees.first_name, ' ',employees.last_name) as 'Dept Manager', departments.dept_name as 'Department', salaries.salary as 'Salary'
+FROM salaries
+	JOIN dept_manager ON salaries.emp_no = dept_manager.emp_no
+    JOIN departments ON dept_manager.dept_no = departments.dept_no
+    JOIN employees on salaries.emp_no = employees.emp_no
+	JOIN titles on salaries.emp_no = titles.emp_no
+WHERE dept_manager.to_date LIKE '9999%'
+	AND salaries.to_date LIKE '9999%'
+    AND titles.to_date LIKE '9999%'
+    AND titles.title LIKE 'Manager'
+ORDER BY salaries.salary DESC
+LIMIT 1;
 
+-- Determine the average salary for each department. Use ALL salary information and round your results.
 
+SELECT departments.dept_name, round(avg(salaries.salary))
+FROM salaries
+	JOIN dept_emp ON salaries.emp_no = dept_emp.emp_no
+    JOIN departments ON dept_emp.dept_no = departments.dept_no
+GROUP BY departments.dept_name
+ORDER BY departments.dept_name DESC;
