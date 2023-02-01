@@ -33,17 +33,11 @@ DESCRIBE albums;
 
 -- (5) Find the name of all albums by Pink Floyd.
 
-EXPLAIN albums;
-SELECT * FROM albums;
-
 SELECT name as Album, Artist
 FROM albums
 WHERE artist = 'Pink Floyd';
 
 -- (6) What is the year Sgt. Pepper's Lonely Hearts Club Band was released?
-
-EXPLAIN albums;
-SELECT * FROM albums;
 
 SELECT release_date 
 FROM albums
@@ -51,26 +45,17 @@ WHERE artist = 'The Beatles' and name LIKE 'SGT%';
 
 -- (7) What is the genre for the album Nevermind?
 
-EXPLAIN albums;
-SELECT * FROM albums;
-
 SELECT genre 
 FROM albums
 WHERE name = 'Nevermind';
 
 -- (8) Which albums were released in the 1990s?
 
-EXPLAIN albums;
-SELECT * FROM albums;
-
 SELECT name, release_date
 FROM albums
 WHERE release_date LIKE '199%';
 
 -- (9) Which albums had less than 20 million certified sales?
-
-EXPLAIN albums;
-SELECT * FROM albums;
 
 SELECT name, sales
 FROM albums
