@@ -1,69 +1,77 @@
 USE employees;
 SELECT * from titles;
 
--- In your script, use DISTINCT 
--- to find the unique titles in the titles table. 
+-- (1) In your script, use DISTINCT to find the unique titles in the titles table. 
 
-select distinct title from titles;
+SELECT DISTINCT title FROM titles;
 
--- How many unique titles have there ever been? 
--- Answer that in a comment in your SQL file.
+-- (2) How many unique titles have there ever been? 
+--     Answer that in a comment in your SQL file.
 -- 7
 
--- Write a query to to find a list of all unique last 
--- names of all employees that start and end with 'E' using GROUP BY
+-- (3) Write a query to to find a list of all unique last 
+--     names of all employees that start and end with 'E' using GROUP BY
 
-select last_name from employees
-where last_name like 'e%e' group by last_name;
+SELECT last_name FROM employees WHERE
+last_name LIKE 'E%e' GROUP BY
+last_name;
 
--- Write a query to to find all unique combinations of first and last names 
--- of all employees whose last names start and end with 'E'.
+-- (4) Write a query to to find all unique combinations of first and last names 
+--     of all employees whose last names start and end with 'E'.
 
-select distinct(concat(first_name, last_name))
-from employees where last_name like 'E%e';
+SELECT CONCAT(first_name, ' ', last_name)
+FROM employees WHERE
+last_name LIKE 'E%e' GROUP BY
+first_name, last_name;
 
--- Write a query to find the unique last names with a 'q' but not 'qu'. 
--- Include those names in a comment in your sql code.
+-- (5) Write a query to find the unique last names with a 'q' but not 'qu'. 
+--     Include those names in a comment in your sql code.
 
-select distinct last_name from employees
-where last_name like '%q%' AND last_name not like '%qu%';
+SELECT last_name FROM employees WHERE
+last_name LIKE '%q%' AND 
+last_name NOT LIKE '%qu%' GROUP BY
+last_name;
 
 -- Chleq, Lindqvist, Qiwen
 
--- Add a COUNT() to your results (the query above) to find the number of 
--- employees with the same last name.
+-- (6) Add a COUNT() to your results (the query above) to find the number of 
+--     employees with the same last name.
 
-select COUNT(distinct(last_name)) from employees
-where last_name like '%q%' AND last_name not like '%qu%';
+SELECT last_name, COUNT(*) FROM employees WHERE
+last_name LIKE '%q%' AND 
+last_name NOT LIKE '%qu%' GROUP BY
+last_name;
 
--- Find all all employees with first names 'Irena', 'Vidya', or 'Maya'. 
--- Use COUNT(*) and GROUP BY to find the number of employees for each gender with those names.
+-- (7) Find all all employees with first names 'Irena', 'Vidya', or 'Maya'. 
 
-select first_name, gender, COUNT(*)
-from employees 
-where (first_name = 'Irena') 
-or (first_name = 'Vidya') 
-or (first_name = 'Maya') 
-group by first_name, gender
-order by first_name;
+SELECT first_name, last_name
+FROM employees WHERE
+first_name IN ('Irena', 'Vidya', 'Maya') GROUP BY
+first_name, last_name;
 
--- Try using IN later
+-- (8) Use COUNT(*) and GROUP BY to find the number of employees for 
+--     each gender with those names.
 
--- Using your query that generates a username for all of the employees, 
--- generate a count employees for each unique username.
+SELECT gender, COUNT(*) 
+FROM employees 
+WHERE first_name 
+IN ('Irena', 'Vidya', 'Maya') 
+GROUP BY gender;
 
-SELECT DISTINCT(LOWER(CONCAT(
+-- (9) Using your query that generates a username for all of the employees, 
+--     generate a count employees for each unique username.
+
+SELECT LOWER(CONCAT(
 		SUBSTR(first_name, 1, 1), 
         SUBSTR(last_name, 1, 4), 
 		'_', 
         SUBSTR(birth_date, 6, 2), 
-        SUBSTR(birth_date, 3, 2)))) AS Username, COUNT(*) as Total FROM employees
-        GROUP BY Username ORDER BY total;
+        SUBSTR(birth_date, 3, 2))) AS Username, COUNT(*) as Total 
+FROM employees GROUP BY Username 
+ORDER BY total;
         
--- From your previous query, are there any duplicate usernames? Yes
--- What is the higest number of times a username shows up? 6
-
-
+-- (10) From your previous query, are there any duplicate usernames? Yes
+--      What is the higest number of times a username shows up? 6
 
 -- Bonus: How many duplicate usernames are there from your previous query? 13251
 
@@ -74,75 +82,71 @@ SELECT CONCAT(
         SUBSTR(birth_date, 6, 2), 
         SUBSTR(birth_date, 3, 2)) AS Username, 
         COUNT(*) as Total 
-        FROM employees
-        GROUP BY Username 
-        HAVING total >= 2 
-        ORDER BY total;
-
-
--- cannot add the aggregate function to distinct but you can with group by
+FROM employees
+GROUP BY Username 
+HAVING total >= 2 
+ORDER BY total;
 
 -- BONUS: Determine the historic average salary for each employee. 
--- When you hear, read, or think "for each" with regard to SQL, you'll probably be grouping by that exact column.
+--        When you hear, read, or think "for each" with regard to SQL, 
+--        you'll probably be grouping by that exact column.
 
-select emp_no, salary from salaries;
 
-SELECT emp_no, avg(salary) as ave_pay
+SELECT emp_no, round(AVG(salary)) as Pay
 FROM salaries GROUP BY emp_no;
 
--- Using the dept_emp table, count how many current employees work in each department. 
--- Count how many current employees work in each department. 
--- The query result should show 9 rows, one for each department and the employee count
+-- BONUS: Using the dept_emp table, count how many current employees work in each department. 
+--        Count how many current employees work in each department. 
+--        The query result should show 9 rows, one for each department and the employee count
 
 SELECT * FROM dept_emp;
 
-SELECT dept_no as Department, COUNT(emp_no) as Employees
+SELECT dept_no, COUNT(*) as total 
 FROM dept_emp
 GROUP BY dept_no;
 
--- Determine how many different salaries each employee has had. This includes both historic and current.
+-- BONUS: Determine how many different salaries each employee has had. 
+--        This includes both historic and current.
 
 SELECT * FROM salaries;
 
-select emp_no as Employee, COUNT(salary) as Num_Sal
-from salaries
-group by emp_no;
+SELECT emp_no, COUNT(*) as Pay
+FROM salaries
+GROUP BY emp_no;
 
--- Find the maximum salary for each employee.
+-- BONUS: Find the maximum salary for each employee.
 
-select emp_no as Employee, max(salary) as Max
-from salaries
-group by emp_no;
+SELECT emp_no, MAX(salary) as Max
+FROM salaries
+GROUP BY emp_no;
 
--- Find the minimum salary for each employee.
+-- BONUS: Find the minimum salary for each employee.
 
-select emp_no as Employee, min(salary) as Min
-from salaries
-group by emp_no;
+SELECT emp_no, MIN(salary) as Min
+FROM salaries
+GROUP BY emp_no;
 
-select emp_no as Employee, min(salary) as Min, max(salary) as Max
-from salaries
-group by emp_no;
+-- BONUS: Find the standard deviation of salaries for each employee.
 
--- Find the standard deviation of salaries for each employee.
+SELECT emp_no, STDDEV(salary) as Deviation
+FROM salaries
+GROUP BY emp_no;
 
-select emp_no as Employee, stddev(salary) as Salary_Dev
-from salaries
-group by emp_no;
+-- BONUS: Now find the max salary for each employee 
+--        where that max salary is greater than $150,000
 
--- Now find the max salary for each employee where that max salary is greater than $150,000
+SELECT emp_no, MAX(salary) as Max
+FROM salaries 
+GROUP BY emp_no
+HAVING MAX >= 150000;
 
-select emp_no as Employee, max(salary) as Max
-from salaries 
-group by emp_no
-having Max >= 150000;
+-- BONUS: Find the average salary for each employee 
+--        where that average salary is between $80k and $90k.
 
--- Find the average salary for each employee where that average salary is between $80k and $90k.
-
-select emp_no as Employee, avg(salary) as Ave_Income
-from salaries
-group by emp_no
-having Ave_Income between 80000 and 90000;
+SELECT emp_no, round(AVG(salary)) as Average
+FROM salaries
+GROUP BY emp_no
+HAVING Average between 80000 and 90000;
 
 
 
