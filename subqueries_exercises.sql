@@ -56,12 +56,13 @@ GROUP BY titles.title;
 --     Table = Employees
 --     Subquery: Table = dept_emp, to_date (
 
-SELECT COUNT(*) FROM employees
+SELECT COUNT(emp_no) 
+FROM employees
 WHERE emp_no
-IN (SELECT emp_no
+NOT IN (SELECT emp_no
 	FROM dept_emp
-    GROUP BY emp_no
-    HAVING MAX(to_date) > NOW());
+    WHERE to_date > NOW());
+    
     
     -- 240124 employees are no longer working for the company
     
@@ -107,10 +108,8 @@ SELECT * FROM salaries;
 
 -- Inner Query: Companies overall, historical average salary
 
-(SELECT round(AVG(SALARY), 2)
-FROM salaries
-	JOIN employees
-		USING (emp_no));
+SELECT round(AVG(SALARY), 2)
+FROM salaries;
 
 
 -- Outer Query: Employees, Current Higher Salary
@@ -135,8 +134,8 @@ SELECT * FROM salaries;
 
 -- Inner Query: current highest salary
 
-SELECT max(salary) from salaries; -- 158220
-SELECT round(stddev(salary)) from salaries where to_date > now(); -- 16904/17310
+SELECT max(salary) from salaries where to_date>now(); -- 158220
+SELECT round(stddev(salary)) from salaries where to_date > now(); -- 17310
 SELECT round(max(salary)-stddev(salary)) from salaries; -- 141315
 SELECT round(max(salary)-stddev(salary))-max(salary) from salaries;
 
@@ -146,15 +145,15 @@ WHERE to_date > NOW() and salary >=
 (SELECT(max(salary)-stddev(salary)) from salaries
 		where to_date > NOW());
 
--- 78/83
+-- 83
 
 -- What percentage of all salaries is this?
 
 SELECT ((SELECT COUNT(*) FROM salaries WHERE 
 	     to_date > NOW() and salary > -- Employees within 1 Standard Deviation
-		(SELECT round(max(salary)-stddev(salary)) -- Standard Deviation 
+		(SELECT round(max(salary)-stddev(salary), 3) -- Standard Deviation 
 		 from salaries where to_date>now()))/(SELECT COUNT(*) -- Total Employee Population
-		 from salaries))*100 as Percentage
+		 from salaries where to_date > NOW()))*100 as Percentage
 FROM salaries
 LIMIT 1;
 
@@ -188,14 +187,11 @@ WHERE gender = 'F' AND title LIKE '%manager%'
 ;
 
 SELECT * 
-FROM departments
-JOIN dept_emp USING (dept_no)
-JOIN employees USING (emp_no)
-WHERE to_date > NOW() and emp_no 
+FROM employees
+WHERE gender = 'F' and emp_no 
 IN (SELECT emp_no 
-    FROM employees 
-		JOIN titles USING (emp_no)
-	WHERE gender = 'F' and title LIKE '%manager%');
+    FROM dept_manager
+	WHERE to_date >NOW());
 
 -- BONUS: Find the first and last name of the employee with the highest salary.
 
@@ -234,9 +230,10 @@ DESCRIBE dept_emp;
 -- emp_no
 -- dept_no
 
-SELECT distinct(dept_name), (SELECT max(salary) from salaries)
+SELECT distinct(dept_name), (SELECT max(salary) from salaries where to_date > NOW())
 FROM employees
 JOIN dept_emp USING (emp_no)
 JOIN departments USING (dept_no)
+WHERE to_date > NOW()
 ORDER BY dept_name
 ;
