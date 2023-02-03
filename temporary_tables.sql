@@ -2,10 +2,6 @@
 --     employees_with_departments that contains 
 --     first_name, last_name, and dept_name 
 --     for employees currently with that department. 
---     Be absolutely sure to create this table on your own database. 
---     If you see "Access denied for user ...", 
---     it means that the query was attempting to write a new table to 
---     a database that you can only read.
 
 USE employees;
 
@@ -34,6 +30,8 @@ ADD full_name varchar(30);
 SELECT * FROM table_test;
 DESCRIBE table_test;
 
+-- ALTER = TABLE
+-- UPDATE = DATA
 -- Update the table so that full name column contains the correct data.
 
 -- a simple example where we want the email address to be just the first name
