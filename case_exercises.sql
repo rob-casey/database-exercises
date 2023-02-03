@@ -34,7 +34,7 @@ DESCRIBE employees;
 -- first_name
 -- last_name
 
-SELECT last_name, 
+SELECT last_name, -- Try this in CASE / WHEN later
 IF(SUBSTR(last_name, 1, 1) between 'A' and 'H','A-H', 
 IF(SUBSTR(last_name, 1, 1) between 'I' and 'Q','I-Q', 
 IF(SUBSTR(last_name, 1, 1) between 'R' and 'Z','R-Z', 'WHY TF NOT'))) as Alpha_Group
@@ -54,3 +54,14 @@ COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 6 THEN 1 ELSE NULL END) as 'Sixties',
 COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 7 THEN 1 ELSE NULL END) as 'Seventies', 
 COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 8 THEN 1 ELSE NULL END) as 'Eighties' 
 FROM employees;
+
+
+-- (4) What is the current average salary for each of the following department groups: 
+-- R&D, Sales & Marketing, Prod & QM, Finance & HR, Customer Service?
+
+-- current to_date
+-- avg(salary)
+-- department no
+-- department name (5)
+
+CASE WHEN(
