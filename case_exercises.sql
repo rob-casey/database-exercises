@@ -39,16 +39,8 @@ IF(SUBSTR(last_name, 1, 1) between 'A' and 'H','A-H',
 IF(SUBSTR(last_name, 1, 1) between 'I' and 'Q','I-Q', 
 IF(SUBSTR(last_name, 1, 1) between 'R' and 'Z','R-Z', 'WHY TF NOT'))) as Alpha_Group
 FROM employees
+ORDER BY last_name
 LIMIT 100;
-
-
-SELECT birth_date, 
-IF(SUBSTR(birth_date, 3, 1) between '6' and '7','A-H', 
-IF(SUBSTR(birth_date, 3, 1) between '7' and '8','I-Q', 
-IF(SUBSTR(birth_date, 3, 1) between '8' and '8','R-Z', 'WHY TF NOT'))) as Alpha_Group
-FROM employees
-LIMIT 100;
-
 
 -- (3) How many employees (current or previous) were born in each decade?
 
@@ -57,35 +49,8 @@ DESCRIBE employees;
 -- birth_date
 
 SELECT
-IF(birth_date LIKE '195%', 1, 0) as Fifties, 
-IF(birth_date LIKE '196%', 1, 0) as Sixties,
-IF(birth_date LIKE '197%', 1, 0) as Seventies,
-IF(birth_date LIKE '198%', 1, 0) as Eighties
-FROM employees
-GROUP BY birth_date;
-
-
-
-SELECT *,
-CASE birth_date WHEN 
-SUBSTR(birth_date, 3, 4) LIKE '195%' 
-and SUBSTR(birth_date, 3, 4) < '196%' THEN 1 ELSE 0 END as '50s',
-FROM employees
-LIMIT 100;
-
-SELECT *, 
-IF(birth_date LIKE '195%', 1, 0) as '50s',
-IF(birth_date LIKE '196%', 1, 0) as '60s',
-IF(birth_date LIKE '197%', 1, 0) as '60s',
-IF(birth_date LIKE '198%', 1, 0) as '70s'
-FROM employees
-LIMIT 100;
-
-
-SELECT *,
-CASE birth_date WHEN birth_date LIKE '195%' THEN 1 ELSE 0 END as '50s',
-CASE birth_date WHEN birth_date LIKE '196%' THEN 1 ELSE 0 END as '60s',
-CASE birth_date WHEN birth_date LIKE '197%' THEN 1 ELSE 0 END as '70s',
-CASE birth_date WHEN birth_date LIKE '198%' THEN 1 ELSE 0 END as '80s'
-FROM employees
-LIMIT 100;
+COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 5 THEN 1 ELSE NULL END) as 'Fifties', 
+COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 6 THEN 1 ELSE NULL END) as 'Sixties', 
+COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 7 THEN 1 ELSE NULL END) as 'Seventies', 
+COUNT(CASE SUBSTR(birth_date, 3, 1) WHEN 8 THEN 1 ELSE NULL END) as 'Eighties' 
+FROM employees;
