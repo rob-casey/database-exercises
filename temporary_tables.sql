@@ -124,6 +124,46 @@ DROP TABLE temp_payment;
 --     for everyone at the company. For this comparison, you will calculate the z-score for each salary. 
 --     In terms of salary, what is the best department right now to work for? The worst?
 
+-- current, average pay, each department COMPARES overall, current pay, employees
+
+USE employees;
+SHOW TABLES;
+
+DESCRIBE salaries;
+DESCRIBE dept_emp;
+
+-- 72012
+
+SELECT * FROM employees
+JOIN dept_emp USING (emp_no)
+JOIN departments USING (dept_no)
+LIMIT 10;
+
+
+SELECT dept_name, dept_name.salary
+		FROM departments
+        JOIN dept_emp USING (dept_no)
+        JOIN salaries USING (emp_no)
+        JOIN employees USING (emp_no)
+        WHERE salary = (SELECT round(avg(salary) )
+					FROM salaries 
+                    JOIN dept_emp USING (emp_no)
+                    WHERE dept_emp.to_date > NOW())
+        GROUP BY dept_name, salary
+        LIMIT 10; 
+
+
+
+    -- Returns the current z-scores for each salary
+    -- Notice that there are 2 separate scalar subqueries involved
+    SELECT salary,
+        (salary - (SELECT AVG(salary) FROM salaries where to_date > now()))
+        /
+        (SELECT stddev(salary) FROM salaries where to_date > now()) AS zscore
+    FROM salaries
+    WHERE to_date > now();
+
+
 
 
 

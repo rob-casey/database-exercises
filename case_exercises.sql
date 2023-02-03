@@ -42,6 +42,9 @@ FROM employees
 ORDER BY last_name
 LIMIT 100;
 
+-- LEFT(last_name, 1)
+
+
 -- (3) How many employees (current or previous) were born in each decade?
 
 DESCRIBE employees;
