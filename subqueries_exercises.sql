@@ -186,8 +186,10 @@ FROM employees
 WHERE gender = 'F' AND title LIKE '%manager%'
 ;
 
-SELECT * 
+SELECT *
 FROM employees
+JOIN dept_emp USING (emp_no)
+JOIN departments USING (dept_no)
 WHERE gender = 'F' and emp_no 
 IN (SELECT emp_no 
     FROM dept_manager
@@ -207,9 +209,11 @@ DESCRIBE employees;
 -- Inner: highest salary
 -- Outer: employee, first/last name
 
-SELECT first_name, last_name, (SELECT max(salary) from salaries)
+SELECT first_name, last_name
 FROM employees
-ORDER BY first_name;
+JOIN salaries USING (emp_no)
+WHERE salary = ((SELECT max(salary) from salaries))
+;
 
 -- Bonus: Find the department name that the employee with the highest salary works in.
 
@@ -230,10 +234,11 @@ DESCRIBE dept_emp;
 -- emp_no
 -- dept_no
 
-SELECT distinct(dept_name), (SELECT max(salary) from salaries where to_date > NOW())
-FROM employees
-JOIN dept_emp USING (emp_no)
+SELECT dept_name FROM dept_emp
 JOIN departments USING (dept_no)
-WHERE to_date > NOW()
-ORDER BY dept_name
+JOIN employees USING (emp_no)
+JOIN salaries USING (emp_no)
+WHERE salary = (SELECT max(salary) from salaries where to_date > NOW())
 ;
+
+
