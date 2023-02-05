@@ -20,7 +20,14 @@ LEFT JOIN roles USING (id);
 SELECT * FROM users 
 RIGHT JOIN roles USING (id);
 
--- (1) Write a query that shows each department along with the name of the current manager for that department.
+
+-- ==========================================
+
+
+-- (1) Write a query that shows each department along 
+--     with the name of the current manager for that department.
+
+-- [Notes]
 -- Each Dept
 -- Current Manager 
 
@@ -70,6 +77,8 @@ ORDER BY dept_name
 LIMIT 10;
 
 -- (2) Find the name of all departments currently managed by women.
+
+-- [Notes]
 -- dept_name
 -- dept_manager, to_date
 -- employees, gender
@@ -82,7 +91,10 @@ WHERE gender = 'F' and to_date > NOW()
 ORDER BY dept_name
 LIMIT 10;
 
--- (3) Find the current titles of employees currently working in the customer service department
+-- (3) Find the current titles of employees currently working in the 
+--     customer service department
+
+-- [Notes]
 -- current titles
 -- current employees
 -- customer service department
@@ -92,10 +104,11 @@ FROM departments
 LEFT JOIN dept_emp USING (dept_no)
 LEFT JOIN titles t USING (emp_no)
 WHERE t.to_date > NOW() and dept_name = 'customer service'
-GROUP BY t.title ORDER BY t.title
-LIMIT 10;
+GROUP BY t.title ORDER BY t.title;
 
 -- (4) Find the current Salary of all current managers.
+
+-- [Notes]
 -- Current Managers, All
 -- Current Salary
 
@@ -106,65 +119,98 @@ JOIN departments d USING (dept_no)
 JOIN salaries s USING (emp_no)
 JOIN employees e USING (emp_no)
 WHERE dm.to_date > NOW() and s.to_date > NOW()
-ORDER BY dept_name
-LIMIT 10;
+ORDER BY dept_name;
 
 -- (5) Find the number of current employees in each department.
 
-SELECT departments.dept_no, 
-	   departments.dept_name as 'Department Name', 
-       COUNT(*)
+-- [Notes]
+-- Each Department
+-- Current Employees
+-- Count
+
+SELECT dept_no, dept_name, 
+COUNT(emp_no) as 'num_employees'
 FROM departments
-JOIN dept_emp ON departments.dept_no = dept_emp.dept_no
-WHERE dept_emp.to_date LIKE '9999%'
-GROUP BY departments.dept_no
-ORDER BY departments.dept_no;
+JOIN dept_emp USING (dept_no)
+WHERE to_date > NOW()
+GROUP BY dept_name
+ORDER BY dept_no;
 
--- (6) Which departments has the highest average salary? hint: use current, not historic information
+-- (6) Which departments has the highest average salary? 
+--     hint: use current, not historic information
 
-SELECT departments.dept_name as 'Department Name', 
-	   round(avg(salaries.salary)) as 'Average Salary' -- aggregate needs to be grouped
-FROM salaries
-JOIN dept_emp ON salaries.emp_no = dept_emp.emp_no
-JOIN departments ON dept_emp.dept_no = departments.dept_no WHERE 
-dept_emp.to_date LIKE '9999%' and 
-salaries.to_date LIKE '9999%' and 
-departments.dept_name = 'Sales' GROUP BY -- can LIMIT 1 (the top) 
-departments.dept_name;
+-- [Notes]
+-- departments
+-- average current salary
 
--- Max can be used via subquery
+SELECT dept_name, avg(salary)
+FROM departments
+JOIN dept_emp de USING (dept_no)
+JOIN salaries s USING (emp_no)
+WHERE s.to_date > NOW() and de.to_date > NOW()
+GROUP BY dept_name;
 
--- Who is the highest paid employee in the Marketing Department?
+-- (7) Who is the highest paid employee in the Marketing Department?
+--     Marketing Department
 
-SELECT CONCAT(employees.first_name, ' ', employees.last_name) as 'Highest Paid Employee', departments.dept_name as 'Department'
-FROM salaries
-	JOIN dept_emp ON salaries.emp_no = dept_emp.emp_no
-	JOIN departments on dept_emp.dept_no = departments.dept_no
-	JOIN employees on salaries.emp_no = employees.emp_no
-WHERE dept_emp.to_date LIKE '9999%'
-	AND salaries.to_date LIKE '9999%'
-	AND departments.dept_name = 'Marketing'
-ORDER  BY salaries.salary DESC
+-- [Notes]
+-- 1 Value, employee, highest salary
+
+SELECT first_name, last_name, salary
+FROM employees
+JOIN dept_emp USING (emp_no)
+JOIN salaries USING (emp_no)
+JOIN departments USING (dept_no)
+WHERE dept_name LIKE '%Marketing%'
+ORDER BY salary DESC
 LIMIT 1;
 
--- Which current department manager has the highest salary?
+-- (8) Which current department manager has the highest salary?
 
-SELECT CONCAT(employees.first_name, ' ',employees.last_name) as 'Dept Manager', 
-	   departments.dept_name as 'Department', 
-       salaries.salary as 'Salary'
-FROM salaries
-	JOIN dept_manager ON salaries.emp_no = dept_manager.emp_no
-    JOIN departments ON dept_manager.dept_no = departments.dept_no
-    JOIN employees on salaries.emp_no = employees.emp_no
-	JOIN titles on salaries.emp_no = titles.emp_no
-WHERE dept_manager.to_date LIKE '9999%'
-	AND salaries.to_date LIKE '9999%'
-    AND titles.to_date LIKE '9999%'
-    AND titles.title LIKE 'Manager'
-ORDER BY salaries.salary DESC
+-- [Notes]
+-- Current Dept Manager
+-- Highest Salary
+
+SELECT first_name, last_name, salary, dept_name
+FROM dept_manager dm
+JOIN salaries s USING (emp_no)
+JOIN employees e USING (emp_no)
+JOIN departments d USING (dept_no)
+WHERE dm.to_date > NOW() AND s.to_date > NOW()
 LIMIT 1;
 
--- Determine the average salary for each department. Use ALL salary information and round your results.
+-- (9) Determine the average salary for each department. 
+--     Use ALL salary information and round your results.
+
+-- [Notes]
+-- Each Department
+-- ALL salary, averaged
+
+SELECT dept_name, avg(salary)
+FROM departments d
+JOIN dept_emp de USING (dept_no)
+JOIN salaries s USING (emp_no)
+GROUP BY dept_name
+LIMIT 10;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 SELECT departments.dept_name, 
 	   round(avg(salaries.salary), 0) -- uses 0
