@@ -61,73 +61,53 @@ SELECT * FROM dept_manager LIMIT 10;
 SELECT * FROM employees LIMIT 10;
 
 SELECT dept_name as 'Department Name', 
-	   CONCAT(first_name, ' ', last_name) as 'Department Manager'
+CONCAT(first_name, ' ', last_name) as 'Department Manager'
 FROM dept_manager
-	JOIN departments USING (dept_no)
-	JOIN employees USING (emp_no)
+JOIN departments USING (dept_no)
+JOIN employees USING (emp_no)
 WHERE to_date > NOW()
 ORDER BY dept_name
-LIMIT 10
-;
-
-SELECT dept_name as 'Department Name', 
-CONCAT(first_name, ' ', last_name) as 'Department Manager'
-FROM dept_manager JOIN 
-departments USING (dept_no) JOIN 
-employees USING (emp_no) WHERE 
-to_date > NOW() ORDER BY 
-dept_name
-LIMIT 10
-;
-
-
-
-
-
-SELECT departments.dept_name as Workspace, 
-	   CONCAT(employees.first_name, ' ', employees.last_name) as Full_name
-FROM dept_manager DM
-JOIN departments ON DM.dept_no = departments.dept_no -- USING (dept_no)
-JOIN employees ON DM.emp_no = employees.emp_no -- USING (emp_no)
-WHERE DM.to_date LIKE '9999%' -- > NOW(); <- String Comparison / Because SQL can interpret field as a date, we're able to use it., make sure applicable to all tables.
-ORDER BY departments.dept_name;
+LIMIT 10;
 
 -- (2) Find the name of all departments currently managed by women.
+-- dept_name
+-- dept_manager, to_date
+-- employees, gender
 
-SELECT departments.dept_name as Workspace, 
-	   CONCAT(employees.first_name, ' ', employees.last_name) as Manager, 
-       Gender -- Not neccessary
-FROM dept_manager DM
-JOIN departments ON DM.dept_no = departments.dept_no
-JOIN employees ON DM.emp_no = employees.emp_no 
-WHERE DM.to_date LIKE '9999%' and employees.gender = 'F';
+SELECT dept_name, CONCAT(first_name, ' ', last_name)
+FROM dept_manager
+JOIN departments USING (dept_no)
+JOIN employees USING (emp_no)
+WHERE gender = 'F' and to_date > NOW()
+ORDER BY dept_name
+LIMIT 10;
 
 -- (3) Find the current titles of employees currently working in the customer service department
+-- current titles
+-- current employees
+-- customer service department
 
-SELECT departments.dept_name as Workspace, -- Not neccesary for question's purpose
-	   CONCAT(employees.first_name, ' ', employees.last_name) as Employee, -- Not neccesary for question's purpose
-       employees.emp_no as Employ_No, -- Not neccesary for question's purpose
-       titles.title 
-FROM dept_emp DE
-JOIN departments ON DE.dept_no = departments.dept_no
-JOIN employees ON DE.emp_no = employees.emp_no
-JOIN titles ON DE.emp_no = titles.emp_no WHERE 
-DE.to_date LIKE '9999%' and 
-titles.to_date LIKE '9999%' and 
-departments.dept_name = 'Customer Service';
-
--- Can reduce the table's length with COUNT() of employees
+SELECT t.title as 'Title', COUNT(*) as 'Count'
+FROM departments
+LEFT JOIN dept_emp USING (dept_no)
+LEFT JOIN titles t USING (emp_no)
+WHERE t.to_date > NOW() and dept_name = 'customer service'
+GROUP BY t.title ORDER BY t.title
+LIMIT 10;
 
 -- (4) Find the current Salary of all current managers.
+-- Current Managers, All
+-- Current Salary
 
-SELECT departments.dept_name as 'Department Name', 
-	   CONCAT(employees.first_name, ' ', employees.last_name) as Name, 
-       salaries.salary as Salary
-FROM dept_manager DM
-JOIN employees ON DM.emp_no = employees.emp_no
-JOIN salaries ON DM.emp_no = salaries.emp_no
-JOIN departments on DM.dept_no = departments.dept_no
-WHERE DM.to_date > NOW() and salaries.to_date > NOW();
+SELECT dept_name as 'Department Name', 
+CONCAT(first_name, ' ', last_name) as 'Name', Salary
+FROM dept_manager dm
+JOIN departments d USING (dept_no)
+JOIN salaries s USING (emp_no)
+JOIN employees e USING (emp_no)
+WHERE dm.to_date > NOW() and s.to_date > NOW()
+ORDER BY dept_name
+LIMIT 10;
 
 -- (5) Find the number of current employees in each department.
 
