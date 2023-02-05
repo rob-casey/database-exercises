@@ -12,12 +12,17 @@ DESCRIBE employees;
 -- emp_no
 -- hire_date
 
-SELECT employees.emp_no, employees.hire_date
+SELECT emp_no, 
+       CONCAT(first_name, ' ', last_name) as 'Employee', 
+       hire_date, to_date
 FROM employees
-WHERE employees.hire_date 
-IN (SELECT employees.hire_date FROM employees WHERE employees.emp_no = '101010');
-
--- dept emp, single value or column
+JOIN dept_emp USING (emp_no)
+WHERE to_date > NOW() and
+hire_date IN 
+(SELECT hire_date
+	FROM employees
+	WHERE emp_no ='101010')
+ORDER BY emp_no;
 
 -- (2) Find all the titles ever held by all current employees with the first name Aamod
 --     titles (titles.title)
@@ -43,13 +48,13 @@ DESCRIBE dept_emp;
 -- from_date
 -- to_date
 
-SELECT titles.title, count(titles.title)
+SELECT title, COUNT(*) 
 FROM titles
-WHERE titles.emp_no
-IN (SELECT employees.emp_no
-	FROM employees
-	WHERE employees.first_name = 'Aamod')
-GROUP BY titles.title;
+WHERE emp_no in
+(SELECT emp_no
+ FROM employees
+ WHERE first_name = 'Aamod')
+ GROUP BY title;
 
 -- (3) How many people in the employees table are no longer working for the company?
 --     How many = Count()
@@ -62,7 +67,6 @@ WHERE emp_no
 NOT IN (SELECT emp_no
 	FROM dept_emp
     WHERE to_date > NOW());
-    
     
     -- 240124 employees are no longer working for the company
     
@@ -82,10 +86,11 @@ WHERE to_date > NOW();
 
 -- Outer Query: Gender, Name
 
-SELECT * FROM employees
+SELECT * 
+FROM employees
 	JOIN dept_manager
 		USING(emp_no)
-        WHERE gender = 'f' and emp_no in 
+WHERE gender = 'f' and emp_no in 
 (
 SELECT emp_no
 FROM dept_manager
