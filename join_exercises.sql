@@ -1,29 +1,29 @@
 USE join_example_db;
-DESCRIBE users;
-DESCRIBE roles;
-
 SHOW tables;
 
--- Use the join_example_db. Select all the records from both the users and roles tables.
+-- (1) Use the join_example_db. Select all the records from both the users and roles tables.
 
-select * from users;
-select * from roles;
+SELECT * from users;
+SELECT * from roles;
+DESCRIBE roles;
+DESCRIBE users;
 
--- Use join, left join, and right join to combine results from the users and roles tables 
--- as we did in the lesson. Before you run each query, guess the expected number of results.
+-- (2) Use join, left join, and right join to combine results from the users and roles tables 
+--     as we did in the lesson. Before you run each query, guess the expected number of results.
 
-SELECT users.name as user_name, roles.name as role_name
-FROM users JOIN roles ON users.role_id = roles.id;
+SELECT * FROM users 
+JOIN roles USING (id);
 
-SELECT users.name as user_name, roles.name as role_name
-FROM users LEFT JOIN roles ON users.role_id = roles.id;
+SELECT * FROM users 
+LEFT JOIN roles USING (id);
 
-SELECT users.name as user_name, roles.name as role_name
-FROM users RIGHT JOIN roles ON users.role_id = roles.id;
-
--- left and right join
+SELECT * FROM users 
+RIGHT JOIN roles USING (id);
 
 -- (1) Write a query that shows each department along with the name of the current manager for that department.
+-- Each Dept
+-- Current Manager 
+
 
 USE employees;
 SHOW tables;
@@ -56,14 +56,33 @@ DESCRIBE salaries;
 -- from_table
 -- to_table
 
-/* Instructor Review: 
+SELECT * FROM departments LIMIT 10;
+SELECT * FROM dept_manager LIMIT 10;
+SELECT * FROM employees LIMIT 10;
 
-SELECT * from employees LIMIT 10; instead of DESCRIBE
+SELECT dept_name as 'Department Name', 
+	   CONCAT(first_name, ' ', last_name) as 'Department Manager'
+FROM dept_manager
+	JOIN departments USING (dept_no)
+	JOIN employees USING (emp_no)
+WHERE to_date > NOW()
+ORDER BY dept_name
+LIMIT 10
+;
 
-*/
-SELECT * FROM departments;
-SELECT * FROM dept_manager;
-SELECT * FROM employees;
+SELECT dept_name as 'Department Name', 
+CONCAT(first_name, ' ', last_name) as 'Department Manager'
+FROM dept_manager JOIN 
+departments USING (dept_no) JOIN 
+employees USING (emp_no) WHERE 
+to_date > NOW() ORDER BY 
+dept_name
+LIMIT 10
+;
+
+
+
+
 
 SELECT departments.dept_name as Workspace, 
 	   CONCAT(employees.first_name, ' ', employees.last_name) as Full_name
