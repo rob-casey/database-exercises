@@ -186,45 +186,8 @@ LIMIT 1;
 -- Each Department
 -- ALL salary, averaged
 
-SELECT dept_name, avg(salary)
-FROM departments d
-JOIN dept_emp de USING (dept_no)
-JOIN salaries s USING (emp_no)
-GROUP BY dept_name
-LIMIT 10;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SELECT departments.dept_name, 
-	   round(avg(salaries.salary), 0) -- uses 0
-FROM salaries
-	JOIN dept_emp ON salaries.emp_no = dept_emp.emp_no
-    JOIN departments ON dept_emp.dept_no = departments.dept_no
-GROUP BY departments.dept_name
-ORDER BY departments.dept_name DESC;
-
-SELECT dept_name, 
-ROUND(AVG(salary), 0) AS avg_sal
-FROM salaries
-	JOIN dept_emp
-		USING (emp_no)
-	JOIN departments
-		USING (dept_no)
-GROUP BY dept_name;
+SELECT dept_name, round(avg(salary))
+	FROM departments
+    JOIN dept_emp USING (dept_no)
+    JOIN salaries USING (emp_no)
+    GROUP BY dept_name;
