@@ -150,7 +150,7 @@ WHERE to_date > NOW() and salary >=
 (SELECT(max(salary)-stddev(salary)) from salaries
 		where to_date > NOW());
 
--- 83
+-- 83 current salaries are within 1 standard deviation
 
 -- What percentage of all salaries is this?
 
