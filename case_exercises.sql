@@ -39,7 +39,6 @@ IF(SUBSTR(last_name, 1, 1) between 'A' and 'H','A-H',
 IF(SUBSTR(last_name, 1, 1) between 'I' and 'Q','I-Q', 
 IF(SUBSTR(last_name, 1, 1) between 'R' and 'Z','R-Z', 'WHY TF NOT'))) as Alpha_Group
 FROM employees
-ORDER BY last_name
 LIMIT 100;
 
 -- LEFT(last_name, 1)
@@ -66,5 +65,41 @@ FROM employees;
 -- avg(salary)
 -- department no
 -- department name (5)
+-- employees
 
-CASE WHEN(
+DESCRIBE departments;
+/*
+'d001','Marketing'
+'d002','Finance'
+'d003','Human Resources'
+'d004','Production'
+'d005','Development'
+'d006','Quality Management'
+'d007','Sales'
+'d008','Research'
+'d009','Customer Service'
+*/
+
+
+-- d008 Research & d005 Development
+-- d007 Sales & d001 Marketing
+-- d004 Production & d006 Quality Management
+-- d002 Finance & d003 Human Resources
+-- d009 Customer Service
+
+
+SELECT 
+	CASE WHEN d.dept_no IN ('d008', 'd005') THEN 'R&D'
+		 WHEN d.dept_no IN ('d007', 'd001') THEN 'Sales & Marketing'
+		 WHEN d.dept_no IN ('d004', 'd006') THEN 'Prod & QM'
+         WHEN d.dept_no IN ('d002', 'd003') THEN 'Finance & HR'
+         WHEN d.dept_no IN ('d009') THEN 'Customer Service'
+    END AS dept_group, ROUND(AVG(salary), 2) as Salary
+FROM departments d
+JOIN dept_emp de USING (dept_no)
+JOIN salaries s USING (emp_no)
+WHERE s.to_date > NOW() AND
+      de.to_date > NOW()
+GROUP BY dept_group
+ORDER BY salary DESC;
+
