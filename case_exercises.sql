@@ -30,19 +30,12 @@ LIMIT 10;
 --     and a new column 'alpha_group' that returns 'A-H', 'I-Q', or 'R-Z' 
 --     depending on the first letter of their last name.
 
-DESCRIBE employees;
--- first_name
--- last_name
-
 SELECT last_name, -- Try this in CASE / WHEN later
 IF(SUBSTR(last_name, 1, 1) between 'A' and 'H','A-H', 
 IF(SUBSTR(last_name, 1, 1) between 'I' and 'Q','I-Q', 
 IF(SUBSTR(last_name, 1, 1) between 'R' and 'Z','R-Z', 'WHY TF NOT'))) as Alpha_Group
 FROM employees
 LIMIT 100;
-
--- LEFT(last_name, 1)
-
 
 -- (3) How many employees (current or previous) were born in each decade?
 
