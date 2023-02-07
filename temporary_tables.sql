@@ -157,7 +157,21 @@ SELECT ROUND(STDDEV(salary))
 FROM salaries
 WHERE to_date > NOW();
 
--- Sales
+
+-- Standard Deviation by Dept Using Z-Scores
+-- 'Sales', 0.9729
+-- 'Marketing', 0.4649
+-- 'Finance', 0.3783
+-- 'Research', -0.2368
+-- 'Production', -0.2408
+-- 'Development', -0.2515
+-- 'Customer Service', -0.2731
+-- 'Quality Management', -0.3795
+-- 'Human Resources', -0.4674
+
+-- Sales is the best department to work for
+-- Human Resources is the worst department to work for
+
 SELECT salary,
         (63922 - 72012)
         /
@@ -166,7 +180,7 @@ SELECT salary,
     WHERE to_date > now()
 LIMIT 1;
 
-
+--
 
     -- Returns the current z-scores for each salary
     -- Notice that there are 2 separate scalar subqueries involved
